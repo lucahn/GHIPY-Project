@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-var topics = ["wink", "smile", "charm", "cute"];
+var topics = ["wink", "smile", "charm", "cute", "laugh"];
 
 function renderButtons() {
     $("#all-buttons").empty();
@@ -24,12 +24,10 @@ $("#add-btn").on("click", function(event) {
     renderButtons();
 });
 
-// $(".giphy-btn").on("click", 
-
 function displayGifs() {
     
     var topic = $(this).attr("data-name");
-    var queryURL= "https://api.giphy.com/v1/gifs/search?api_key=4HLv3wFHdk65tcEPg2YHHtUVOZHb45Ff&q=" + topic + "&limit=10&rating=G&lang=en";
+    var queryURL= "https://api.giphy.com/v1/gifs/search?api_key=4HLv3wFHdk65tcEPg2YHHtUVOZHb45Ff&q=" + topic + "&limit=10&rating=R&lang=en";
 
     $.ajax({
         url: queryURL,
@@ -38,21 +36,41 @@ function displayGifs() {
         .then(function(response){
             console.log(response);
             
+            var gifDiv = $("<div class='the-div'>")
             var gifURL = response.data;
 
             for (var i = 0; i < gifURL.length; i++) {
-                var theTAG = $("<img>");
+    
+                var gifTitle = (gifURL[i].title);
+                var theTitle = $("<p>").text('"' + gifTitle + '"');
+                theTitle.addClass("gif-title");
+                
+                gifDiv.append(theTitle);
+
+                
+                var theImage = $("<img>");
                 var stillGIF = gifURL[i].images.fixed_width_still.url;
                 var animateGIF = gifURL[i].images.fixed_width.url;
 
-                theTAG.attr("src", stillGIF);
-                theTAG.addClass("giphy-image");
-                theTAG.attr("data-still", stillGIF);
-                theTAG.attr("data-animate", animateGIF);
-                theTAG.attr("alt", topic);
-                theTAG.attr("data-type", "still");
-                
-                $("#all-gifs").append(theTAG);
+                theImage.attr("src", stillGIF);
+                theImage.addClass("giphy-image");
+                theImage.attr("data-still", stillGIF);
+                theImage.attr("data-animate", animateGIF);
+                theImage.attr("alt", topic);
+                theImage.attr("data-type", "still");
+
+                gifDiv.append(theImage);
+
+
+                var gifRating = (gifURL[i].rating);
+                var theRating = $("<p>").text("Rating: " + gifRating);
+                theRating.addClass("gif-rating");
+               
+                gifDiv.append(theRating);
+
+
+                // gifDiv.append(theTitle, theImage, theRating);
+                $("#all-gifs").prepend(gifDiv)
             }
         });
 }
